@@ -10,7 +10,7 @@ class RunSolver:
         self.dst_dir = dst_dir
 
     def solver(self):
-        v = simulation.velocity_handler.VelocityHandler(self.case_dir + '/0/U', 45, 45)
+        v = simulation.velocity_handler.VelocityHandler(self.case_dir + '/0/U')
         v.set_velocity()
 
         BasicRunner(argv=['scalarTransportFoam', '-case', self.case_dir]).start()
