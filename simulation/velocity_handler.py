@@ -6,7 +6,7 @@ from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
 
 class VelocityHandler:
 
-    def __init__(self, u_file_path, min_theta, max_theta):
+    def __init__(self, u_file_path, min_theta=float(10), max_theta=float(80)):
         self.u_file_path = u_file_path
         self.min_theta = min_theta
         self.max_theta = max_theta
