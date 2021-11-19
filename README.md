@@ -1,5 +1,5 @@
 # TorchFoam
-A package to run OpenFOAM simulations, extract and process the data for use in PyTorch.
+A package to run OpenFOAM simulations, extract and process the data for use in PyTorch. Requires Python v3.8.10.
 
 ## Interfacing with OpenFOAM:
 The `PyFoam` library is used to interface with openFOAM. This library includes useful classes which introduce an intuitive way to set up parameters for an OpenFOAM simulation from within a python script. 
