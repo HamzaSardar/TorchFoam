@@ -1,5 +1,8 @@
 /venv
 /.idea
 /__pycache__
+/torchfoam/__pycache__
+/torchfoam/simulation/__pycache__
+/torchfoam/data_processing/__pycache__
 tmp_*
 /Data
