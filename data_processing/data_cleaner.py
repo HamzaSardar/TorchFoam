@@ -26,7 +26,7 @@ class DataCleaner:
         clean_data = self.results.translate(results_trans_table)
         self.np_results = np.fromstring(clean_data, sep=' ')
 
-    def return_data(self):
+    def return_data(self) -> np.array:
         if self.mode == 's':
             return self.results.reshape(self.num_samples, 1)
         if self.mode == 'v':
