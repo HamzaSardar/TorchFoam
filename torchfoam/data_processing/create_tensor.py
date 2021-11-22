@@ -1,12 +1,13 @@
-import numpy as np
+from typing import Union
 
+import numpy as np
 from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
 
 
 class CreateTensor:
     def __init__(self,
-                 require_u=True,
-                 u_dir=None):
+                 require_u: bool = True,
+                 u_dir: Union[None, str] = None) -> None:
 
         """
         CreateTensor:
@@ -27,10 +28,10 @@ class CreateTensor:
         if require_u and u_dir is None:
             raise ValueError('If U values required in tensor, please provide case/0/U')
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> np.array:
         return self.return_np_tensor(*args)
 
-    def return_np_tensor(self, *np_arrays):
+    def return_np_tensor(self, *np_arrays) -> np.array:
 
         """Returns a single tensor containing data from simulation.
 
@@ -53,15 +54,15 @@ class CreateTensor:
             return np.concatenate((np_arrays), axis=1)
 
     @staticmethod
-    def _create_u_tensor(u_dir, num_rows):
+    def _create_u_tensor(u_dir: str, num_rows: int) -> np.array:
 
         """Helper function to create a tensor of velocity values at each cell for a uniform field.
 
         Parameters
         ----------
-        u_dir:
+        u_dir: str
             File path to velocity results field.
-        num_rows:
+        num_rows: int
             Number of rows required in velocity tensor.
 
         Returns
