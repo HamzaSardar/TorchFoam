@@ -4,6 +4,15 @@ import numpy as np
 class DataCleaner:
 
     def __init__(self, mode):
+
+        """DataCleaner - converts an OpenFoam results file into a numpy array.
+
+        Parameters
+        ----------
+        mode: str
+            's' - Scalar mode.
+            'v' - Vector mode.
+        """
         self.mode = mode
         self.results = None
         self.specials = {'\n': ' ', '(': '', ')': '', ';': ''}
@@ -12,6 +21,15 @@ class DataCleaner:
         return self.get(*args)
 
     def get(self, results_dir):
+
+        """Function to run helper functions.
+
+        Parameters
+        ----------
+        results_dir: str
+            Path to ASCII results file.
+        """
+
         results = self._load_data(results_dir)
         num_samples = int(results[20])
         data = self._clean_data(results, num_samples, self.specials)
@@ -20,11 +38,43 @@ class DataCleaner:
 
     @staticmethod
     def _load_data(results_dir):
+
+        """Helper function to load and return results file.
+
+        Parameters
+        ----------
+        results_dir: str
+            Path to ASCII results file.
+
+        Returns
+        -------
+        List[str]
+            Text file as list of (str) lines.
+        """
+
         with open(str(results_dir), 'r') as f:
             return f.readlines()
 
     @staticmethod
     def _clean_data(results, num_samples, specials):
+
+        """Helper function to clean data and convert to numpy array of floats.
+
+        Parameters
+        ----------
+        results: List[str]
+            Results file in specified format.
+        num_samples: int
+            Number of data points.
+        specials: Dict[str, str]
+            Characters to remove are passed as keys, with values set as ''.
+
+        Returns
+        -------
+        numpy.array
+            Results data in numpy format.
+        """
+
         results = results[22: 22 + num_samples + 1]
         results = ' '.join(results).lower()
         results_trans_table = results.maketrans(specials)
@@ -33,6 +83,25 @@ class DataCleaner:
 
     @staticmethod
     def _return_data(data, num_samples, mode) -> np.array:
+
+        """Helper function to return numpy.array data in required shape.
+
+        Parameters
+        ----------
+        data: np.array
+            Results data.
+        num_samples: int
+            Number of data points.
+        mode: str
+            's' - Scalar mode.
+            'v' - Vector mode.
+
+        Returns
+        -------
+        np.array
+            Results, in numpy array of required shape.
+        """
+
         if mode == 's':
             return data.reshape(num_samples, 1)
         if mode == 'v':
