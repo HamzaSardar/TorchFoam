@@ -1,12 +1,15 @@
 import math
 import random
+from typing import NoReturn, Union, List
 
 from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
 
+from torchfoam.simulation.base_parameter_setter import BaseParameterSetter
 
-class VelocitySetter:
 
-    def __init__(self, u_file_path, min_theta=float(10), max_theta=float(80)):
+class VelocitySetter2D(BaseParameterSetter):
+
+    def __init__(self, u_file_path: str, min_theta: float = float(10), max_theta: float = float(80)) -> None:
 
         """
         VelocitySetter:
@@ -26,12 +29,12 @@ class VelocitySetter:
         self.u_file_path = u_file_path
         self.min_theta = min_theta
         self.max_theta = max_theta
-        self.vel_vector = self._vel_generator_uniform(10, 80)
+        self.vel_vector = self._get_parameter()
         self.ux = self.vel_vector[0]
         self.uy = self.vel_vector[1]
         self.theta = self.vel_vector[2]
 
-    def set_velocity(self):
+    def set_parameter(self) -> NoReturn:
 
         """Function to parse parameter file as dictionary and set values.
         """
@@ -42,17 +45,9 @@ class VelocitySetter:
 
         vel.writeFile()
 
-    @staticmethod
-    def _vel_generator_uniform(min_theta, max_theta):
+    def _get_parameter(self) -> Union[float, List[float]]:
 
-        """Helper method to generate velocity vector.
-
-        Parameters
-        ----------
-        min_theta: float
-            Lower bound for angle of velocity vector to the +x axis.
-        max_theta: float
-            Upper bound for angle of velocity vector to the +x axis.
+        """Helper method to generate parameter. Here a random velocity vector is generated.
 
         Returns
         -------
@@ -64,7 +59,7 @@ class VelocitySetter:
             Angle between velocity and +x axis.
         """
 
-        theta = random.uniform(min_theta, max_theta)
+        theta = random.uniform(self.min_theta, self.max_theta)
         ux = math.cos(math.radians(theta))
         uy = math.sin(math.radians(theta))
 

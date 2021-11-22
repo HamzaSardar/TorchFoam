@@ -1,9 +1,11 @@
+from typing import List, Dict
+
 import numpy as np
 
 
 class DataCleaner:
 
-    def __init__(self, mode):
+    def __init__(self, mode: str) -> None:
 
         """DataCleaner - converts an OpenFoam results file into a numpy array.
 
@@ -17,10 +19,10 @@ class DataCleaner:
         self.results = None
         self.specials = {'\n': ' ', '(': '', ')': '', ';': ''}
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> np.array:
         return self.get(*args)
 
-    def get(self, results_dir):
+    def get(self, results_dir: str) -> np.array:
 
         """Function to run helper functions.
 
@@ -37,7 +39,7 @@ class DataCleaner:
         return self._return_data(data, num_samples, self.mode)
 
     @staticmethod
-    def _load_data(results_dir):
+    def _load_data(results_dir: str) -> List[str]:
 
         """Helper function to load and return results file.
 
@@ -56,7 +58,7 @@ class DataCleaner:
             return f.readlines()
 
     @staticmethod
-    def _clean_data(results, num_samples, specials):
+    def _clean_data(results: List[str], num_samples: int, specials: Dict[str, str]) -> np.array:
 
         """Helper function to clean data and convert to numpy array of floats.
 
@@ -82,7 +84,7 @@ class DataCleaner:
         return np.fromstring(clean_data, sep=' ')
 
     @staticmethod
-    def _return_data(data, num_samples, mode) -> np.array:
+    def _return_data(data: np.array, num_samples: int, mode: str) -> np.array:
 
         """Helper function to return numpy.array data in required shape.
 
