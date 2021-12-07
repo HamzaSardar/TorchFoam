@@ -7,26 +7,46 @@ from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
 class CreateTensor:
     def __init__(self,
                  require_u: bool = True,
-                 u_dir: Union[None, str] = None) -> None:
+                 require_cell_Re: bool = True,
+                 u_dir: Union[None, str] = None,
+                 vol_tensor: np.array = None,
+                 nu: float = None) -> None:
+
 
         """
         CreateTensor:
          - Pass in numpy tensors and concatenate into one tensor.
          - Creates a tensor of U values for a uniform U field, and concatenates.
+         - Creates a tensor of local (cell) Re values, based on cube root cell volume.
          - Returns a tensor of (n samples) x (m columns)
 
         Parameters
         ----------
         require_u: bool
             Is a tensor of U values required?
+        require_cell_Re: bool
+            Is a tensor of local (cell) Re required?
         u_dir: str
             Path to velocity results file.
+        vol_tensor: np.array
+            Numpy array of cell volumes.
+        nu: float
+            Kinematic viscosity.
         """
 
         self.require_u = require_u
+        self.require_cell_Re = require_cell_Re
         self.u_dir = u_dir
+        self.vol_tensor = vol_tensor
+        self.nu = nu
+
         if require_u and u_dir is None:
             raise ValueError('If U values required in tensor, please provide case/0/U')
+        if require_cell_Re and u_dir is None:
+            raise ValueError('Cell Re cannot be calculated without U values. Please provide case/0/U')
+        if require_cell_Re and vol_tensor is None:
+            raise ValueError('Cell Re cannot be calculated without cell volumes.' + '\n' +
+                             'Please provide Numpy array of cell volumes.')
 
     def __call__(self, *args, **kwargs) -> np.array:
         return self.return_np_tensor(*args)
@@ -49,9 +69,14 @@ class CreateTensor:
         if self.require_u:
             u_tensor = self._create_u_tensor(self.u_dir, int(len(np_arrays[0])))
             np_temp =  np.concatenate((np_arrays), axis=1)
-            return np.concatenate((np_temp, u_tensor), axis=1)
+            np_temp = np.concatenate((np_temp, u_tensor), axis=1)
+            if self.require_cell_Re:
+                Re_tensor = self._create_Re_tensor(u_tensor)
+                np.temp = np.concatenate((np_temp, Re_tensor), axis =1)
         else:
-            return np.concatenate((np_arrays), axis=1)
+            np_temp = np.concatenate((np_arrays), axis=1)
+
+        return np_temp
 
     @staticmethod
     def _create_u_tensor(u_dir: str, num_rows: int) -> np.array:
@@ -82,3 +107,6 @@ class CreateTensor:
         u_tensor[:, 1] += u_y
         u_tensor[:, 2] += u_z
         return u_tensor
+
+    def _create_Re_tensor(self, u_tensor: np.array) -> np.array:
+        return (np.divide(np.multiply(u_tensor, np.cbrt(self.vol_tensor)), self.nu))
