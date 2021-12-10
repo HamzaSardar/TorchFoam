@@ -9,7 +9,11 @@ from torchfoam.simulation.base_parameter_setter import BaseParameterSetter
 
 class VelocitySetter2D(BaseParameterSetter):
 
-    def __init__(self, u_file_path: str, min_theta: float = float(10), max_theta: float = float(80)) -> None:
+    def __init__(self,
+                 u_file_path: str,
+                 min_theta: int = int(10),
+                 max_theta: int = int(80),
+                 fixed_theta: Union[float, None] = None) -> None:
 
         """
         VelocitySetter:
@@ -20,15 +24,16 @@ class VelocitySetter2D(BaseParameterSetter):
         ----------
         u_file_path: str
             File path to '0/U', intial velocity field file.
-        min_theta: float
+        min_theta: int
             Lower bound for angle of velocity vector to the +x axis.
-        max_theta: float
+        max_theta: int
             Upper bound for angle of velocity vector to the +x axis.
         """
 
         self.u_file_path = u_file_path
         self.min_theta = min_theta
         self.max_theta = max_theta
+        self.fixed_theta = fixed_theta
         self.vel_vector = self._get_parameter()
         self.ux = self.vel_vector[0]
         self.uy = self.vel_vector[1]
@@ -58,9 +63,13 @@ class VelocitySetter2D(BaseParameterSetter):
         theta: float
             Angle between velocity and +x axis.
         """
-
-        theta = random.uniform(self.min_theta, self.max_theta)
-        ux = math.cos(math.radians(theta))
-        uy = math.sin(math.radians(theta))
+        if not self.fixed_theta:
+            theta = random.uniform(self.min_theta, self.max_theta)
+            ux = math.cos(math.radians(theta))
+            uy = math.sin(math.radians(theta))
+        else:
+            theta = self.fixed_theta
+            ux = math.cos(math.radians(theta))
+            uy = math.sin(math.radians(theta))
 
         return [ux, uy, theta]

@@ -7,7 +7,7 @@ from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile
 class CreateTensor:
     def __init__(self,
                  require_u: bool = True,
-                 require_cell_Re: bool = True,
+                 require_cell_Re: bool = False,
                  u_dir: Union[None, str] = None,
                  vol_tensor: np.array = None,
                  nu: float = None) -> None:
