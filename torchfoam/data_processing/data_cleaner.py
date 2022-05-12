@@ -1,4 +1,5 @@
 from typing import List, Dict
+from pathlib import Path
 
 import numpy as np
 
@@ -12,8 +13,9 @@ class DataCleaner:
         Parameters
         ----------
         mode: str
-            's' - Scalar mode.
-            'v' - Vector mode.
+            's' - Scalar mode (1 value).
+            'v' - Vector mode (3 values).
+            't' - Tensor mode (9 values).
         """
         self.mode = mode
         self.results = None
@@ -22,13 +24,13 @@ class DataCleaner:
     def __call__(self, *args, **kwargs) -> np.array:
         return self.get(*args)
 
-    def get(self, results_dir: str) -> np.array:
+    def get(self, results_dir: Path) -> np.array:
 
         """Function to run helper functions.
 
         Parameters
         ----------
-        results_dir: str
+        results_dir: Path
             Path to ASCII results file.
         """
 
@@ -39,13 +41,13 @@ class DataCleaner:
         return self._return_data(data, num_samples, self.mode)
 
     @staticmethod
-    def _load_data(results_dir: str) -> List[str]:
+    def _load_data(results_dir: Path) -> List[str]:
 
         """Helper function to load and return results file.
 
         Parameters
         ----------
-        results_dir: str
+        results_dir: Path
             Path to ASCII results file.
 
         Returns
@@ -108,3 +110,5 @@ class DataCleaner:
             return data.reshape(num_samples, 1)
         if mode == 'v':
             return data.reshape(num_samples, 3)
+        if mode == 't':
+            return data.reshape(num_samples, 9)
